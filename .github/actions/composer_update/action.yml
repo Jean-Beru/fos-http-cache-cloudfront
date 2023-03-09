@@ -1,0 +1,27 @@
+name: 'Composer update'
+description: 'Install or update Composer dependencies'
+runs:
+  using: 'composite'
+  steps:
+    - name: Get composer cache directory
+      id: composercache
+      shell: bash
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composercache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+        restore-keys: ${{ runner.os }}-composer-
+    - name: Update project dependencies
+      shell: bash
+      run: composer update --no-interaction --no-progress --ansi
+    - name: Cache PHPUnit results
+      uses: actions/cache@v3
+      with:
+        path: .phpunit.result.cache
+        key: phpunit-php${{ matrix.php }}-${{ github.sha }}
+        restore-keys: |
+          phpunit-php${{ matrix.php }}-
+          phpunit-
+      continue-on-error: true
