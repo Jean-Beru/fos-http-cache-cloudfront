@@ -9,7 +9,7 @@ This library provides an implementation of [FOSHttpCache](https://github.com/Fri
 
 ### Initialize dependency
 
-First, create an instance of `Aws\CloudFront\CloudFrontClient` to allow the invalidator to make requests.
+First, create an instance of `AsyncAws\CloudFront\CloudFrontClient` to allow the proxy to make requests.
 See [aws-sdk-php documentation](https://docs.aws.amazon.com/aws-sdk-php/v3/api/class-Aws.AwsClient.html#___construct) 
 for more information.
 
@@ -19,40 +19,36 @@ use Aws\CloudFront\CloudFrontClient;
 $client = new CloudFrontClient(/* client configuration */);
 ```
 
+### Create the CloudFront proxy
+
+To instantiate the proxy, pass the CloudFront client and the AWS CloudFront distribution ID.
+
+```php
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
+
+$proxy = new CloudFront(
+    client: $client,
+    distributionId: 'XYZ1234657',
+);
+```
+
 ### Invalidate URLs
 
 To invalidate `/homepage` URL and all URLs matching the `/assets/*` pattern on the "XYZ1234657" distribution.
 
 ```php
-use JeanBeru\FosHttpCacheCloudFront\Proxy\CloudFrontCacheInvalidator;
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 
-$distributionId = 'XYZ1234657';
-
-$invalidator = new CloudFrontCacheInvalidator(
+$proxy = new CloudFront(
     client: $client,
     distributionId: 'XYZ1234657',
 );
-$invalidator
+$proxy
     ->purge('/homepage')
     ->purge('/assets/*')
     // To send the purge request, flush() method must be called
     ->flush()
 ; 
-```
-
-### Send request synchronously
-
-By default, `CloudFrontCacheInvalidator` sends requests asynchronously. You can configure the proxy client to use 
-synchronous mode:
-```php
-use JeanBeru\FosHttpCacheCloudFront\Proxy\CloudFrontCacheInvalidator;
-use JeanBeru\FosHttpCacheCloudFront\CallerReference\DateCallerReferenceGenerator;
-
-$invalidator = new CloudFrontCacheInvalidator(
-    client: $client,
-    distributionId: 'XYZ1234657',
-    useAsync: false,
-);
 ```
 
 ### Avoid request duplication
@@ -61,17 +57,15 @@ CloudFront APIs asks for a "caller reference" to avoid duplicated requests. By d
 [UniqIdCallerReferenceGenerator](./CallerReference/UniqIdCallerReferenceGenerator.php) to generate a unique identifier.
 
 You can use other generators present in the [CallerReference folder](./CallerReference/) or implement your own by
-implementing the
-[CallerReferenceGenerator](./CallerReference/CallerReferenceGenerator)
-interface.
+implementing the [CallerReferenceGenerator](./CallerReference/CallerReferenceGenerator) interface.
 
 For instance, if you want to avoid duplicate calls in the same minute:
 
 ```php
-use JeanBeru\FosHttpCacheCloudFront\Proxy\CloudFrontCacheInvalidator;
-use JeanBeru\FosHttpCacheCloudFront\CallerReference\DateCallerReferenceGenerator;
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
+use JeanBeru\HttpCacheCloudFront\CallerReference\DateCallerReferenceGenerator;
 
-$invalidator = new CloudFrontCacheInvalidator(
+$proxy = new CloudFront(
     client: $client,
     distributionId: 'XYZ1234657',
     callerReferenceGenerator: new DateCallerReferenceGenerator('YmdHi'),
@@ -82,5 +76,5 @@ If a duplication is detected by AWS, a `FOS\HttpCache\Exception\ProxyResponseExc
 
 ## Resources
 
-* [Report issues](https://github.com/jean-beru/fos-http-cache-cloudfrontr/issues) and
-  [send Pull Requests](https://github.com/jean-beru/fos-http-cache-cloudfrontr/pulls) 
+* [Report issues](https://github.com/jean-beru/fos-http-cache-cloudfront/issues) and
+  [send Pull Requests](https://github.com/jean-beru/fos-http-cache-cloudfront/pulls) 
