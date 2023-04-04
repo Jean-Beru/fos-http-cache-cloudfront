@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class UniqIdCallerReferenceGeneratorTest extends TestCase
 {
-    public function test__invoke(): void
+    public function testInvoke(): void
     {
         $generator = new UniqIdCallerReferenceGenerator();
 

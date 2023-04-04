@@ -12,23 +12,34 @@ use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use JeanBeru\HttpCacheCloudFront\CallerReference\CallerReferenceGenerator;
 use JeanBeru\HttpCacheCloudFront\CallerReference\UniqIdCallerReferenceGenerator;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class CloudFront implements ProxyClient, PurgeCapable
 {
-    private readonly CallerReferenceGenerator $callerReferenceGenerator;
+    /**
+     * @var array{
+     *     distribution_id: string,
+     *     caller_reference_generator: CallerReferenceGenerator,
+     * }
+     */
+    private readonly array $options;
+
     /** @var array<string, true> */
     private array $items = [];
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(
         private readonly CloudFrontClient $client,
-        private readonly string $distributionId,
-        CallerReferenceGenerator $callerReferenceGenerator = null,
+        array $options = [],
     ) {
-        $this->callerReferenceGenerator = $callerReferenceGenerator ?? new UniqIdCallerReferenceGenerator();
+        $this->options = $this->configureOptions()->resolve($options);
     }
 
     /**
      * @param array<string, string> $headers
+     * @param mixed                 $url
      */
     public function purge($url, array $headers = []): self
     {
@@ -39,20 +50,20 @@ final class CloudFront implements ProxyClient, PurgeCapable
 
     public function flush(): int
     {
-        $items = $this->items;
-        $this->items = [];
-
-        if (0 === $quantity = count($items)) {
+        if (0 === $quantity = count($this->items)) {
             return 0;
         }
+
+        $items = $this->items;
+        $this->items = [];
 
         $exceptions = new ExceptionCollection();
 
         try {
             $this->client->createInvalidation([
-                'DistributionId' => $this->distributionId,
+                'DistributionId' => $this->options['distribution_id'],
                 'InvalidationBatch' => [
-                    'CallerReference' => (string) $this->callerReferenceGenerator,
+                    'CallerReference' => $this->options['caller_reference_generator'],
                     'Paths' => [
                         'Items' => array_keys($items),
                         'Quantity' => $quantity,
@@ -75,5 +86,15 @@ final class CloudFront implements ProxyClient, PurgeCapable
         }
 
         return $quantity;
+    }
+
+    private function configureOptions(): OptionsResolver
+    {
+        return (new OptionsResolver())
+            ->setRequired('distribution_id')
+            ->setAllowedTypes('distribution_id', 'string')
+            ->setDefault('caller_reference_generator', new UniqIdCallerReferenceGenerator())
+            ->setAllowedTypes('caller_reference_generator', CallerReferenceGenerator::class)
+        ;
     }
 }
