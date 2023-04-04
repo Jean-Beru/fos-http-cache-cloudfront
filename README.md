@@ -3,8 +3,6 @@
 This library provides an implementation of [FOSHttpCache](https://github.com/FriendsOfSymfony/FOSHttpCache/) for
 [CloudFront](https://aws.amazon.com/cloudfront/).
 
-## /!\ This library is experimental /!\
-
 ## Usage
 
 ### Initialize dependency
@@ -28,7 +26,9 @@ use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 
 $proxy = new CloudFront(
     client: $client,
-    distributionId: 'XYZ1234657',
+    options: [
+      'distribution_id' => 'XYZ1234657',
+    ],
 );
 ```
 
@@ -37,12 +37,6 @@ $proxy = new CloudFront(
 To invalidate `/homepage` URL and all URLs matching the `/assets/*` pattern on the "XYZ1234657" distribution.
 
 ```php
-use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
-
-$proxy = new CloudFront(
-    client: $client,
-    distributionId: 'XYZ1234657',
-);
 $proxy
     ->purge('/homepage')
     ->purge('/assets/*')
@@ -67,8 +61,10 @@ use JeanBeru\HttpCacheCloudFront\CallerReference\DateCallerReferenceGenerator;
 
 $proxy = new CloudFront(
     client: $client,
-    distributionId: 'XYZ1234657',
-    callerReferenceGenerator: new DateCallerReferenceGenerator('YmdHi'),
+    options: [
+      'distribution_id' => 'XYZ1234657',
+      'caller_reference_generator' => new DateCallerReferenceGenerator('YmdHi'),
+    ],
 );
 ```
 
