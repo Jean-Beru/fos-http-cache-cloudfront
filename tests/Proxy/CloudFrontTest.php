@@ -15,8 +15,9 @@ use PHPUnit\Framework\TestCase;
 class CloudFrontTest extends TestCase
 {
     /** @var CloudFrontClient&\PHPUnit\Framework\MockObject\MockObject */
-    private CloudFrontClient $client;
-    private CallerReferenceGenerator $callerReferenceGenerator;
+    private $client;
+    /** @var CallerReferenceGenerator */
+    private $callerReferenceGenerator;
 
     protected function setUp(): void
     {

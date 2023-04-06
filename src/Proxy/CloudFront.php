@@ -16,13 +16,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class CloudFront implements ProxyClient, PurgeCapable
 {
+    /** @var CloudFrontClient */
+    private $client;
+
     /**
      * @var array{
      *     distribution_id: string,
      *     caller_reference_generator: CallerReferenceGenerator,
      * }
      */
-    private readonly array $options;
+    private array $options;
 
     /** @var array<string, true> */
     private array $items = [];
@@ -30,10 +33,9 @@ final class CloudFront implements ProxyClient, PurgeCapable
     /**
      * @param array<string, mixed> $options
      */
-    public function __construct(
-        private readonly CloudFrontClient $client,
-        array $options = [],
-    ) {
+    public function __construct(CloudFrontClient $client, array $options = [])
+    {
+        $this->client = $client;
         $this->options = $this->configureOptions()->resolve($options);
     }
 
@@ -72,12 +74,13 @@ final class CloudFront implements ProxyClient, PurgeCapable
             ]);
         } catch (HttpException $e) {
             $exceptions->add(new ProxyResponseException(
-                message: sprintf(
+                sprintf(
                     '%s error response "%s" from caching proxy',
                     $e->getResponse()->getStatusCode(),
-                    $e->getMessage(),
+                    $e->getMessage()
                 ),
-                previous: $e,
+                0,
+                $e
             ));
         }
 

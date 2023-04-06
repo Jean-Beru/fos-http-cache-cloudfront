@@ -6,9 +6,12 @@ namespace JeanBeru\HttpCacheCloudFront\CallerReference;
 
 final class DateCallerReferenceGenerator implements CallerReferenceGenerator
 {
-    public function __construct(
-        private readonly string $format = 'U.u',
-    ) {
+    /** @var string */
+    private $format;
+
+    public function __construct(string $format = 'U.u')
+    {
+        $this->format = $format;
     }
 
     public function __toString(): string
