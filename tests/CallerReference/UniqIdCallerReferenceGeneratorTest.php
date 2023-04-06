@@ -13,6 +13,6 @@ class UniqIdCallerReferenceGeneratorTest extends TestCase
     {
         $generator = new UniqIdCallerReferenceGenerator();
 
-        $this->assertNotSame((string) $generator, (string) $generator);
+        $this->assertNotSame($generator(), $generator());
     }
 }

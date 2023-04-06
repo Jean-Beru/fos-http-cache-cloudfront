@@ -13,6 +13,6 @@ class DateCallerReferenceGeneratorTest extends TestCase
     {
         $generator = new DateCallerReferenceGenerator('Y');
 
-        $this->assertSame(date('Y'), (string) $generator);
+        $this->assertSame(date('Y'), $generator());
     }
 }

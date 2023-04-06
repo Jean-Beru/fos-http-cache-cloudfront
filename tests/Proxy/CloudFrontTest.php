@@ -23,7 +23,7 @@ class CloudFrontTest extends TestCase
     {
         $this->client = $this->createMock(CloudFrontClient::class);
         $this->callerReferenceGenerator = new class() implements CallerReferenceGenerator {
-            public function __toString(): string
+            public function __invoke(): string
             {
                 return 'test-caller-reference';
             }
@@ -77,7 +77,7 @@ class CloudFrontTest extends TestCase
     {
         $this->client
             ->method('createInvalidation')
-            ->willThrowException(new AccessDeniedException(new SimpleMockedResponse(content: '<Error><message>Access denied.</message></Error>', statusCode: 403)))
+            ->willThrowException(new AccessDeniedException(new SimpleMockedResponse('<Error><message>Access denied.</message></Error>', [], 403)))
         ;
 
         $this->expectException(ExceptionCollection::class);

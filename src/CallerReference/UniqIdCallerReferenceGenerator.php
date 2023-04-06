@@ -6,7 +6,7 @@ namespace JeanBeru\HttpCacheCloudFront\CallerReference;
 
 final class UniqIdCallerReferenceGenerator implements CallerReferenceGenerator
 {
-    public function __toString(): string
+    public function __invoke(): string
     {
         return uniqid('', true);
     }

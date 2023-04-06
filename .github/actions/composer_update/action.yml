@@ -1,5 +1,10 @@
 name: 'Composer update'
 description: 'Install or update Composer dependencies'
+inputs:
+  prefer:
+    description: 'Prefer lowest or highest versions of dependencies'
+    required: false
+    default: 'highest'
 runs:
   using: 'composite'
   steps:
@@ -15,13 +20,9 @@ runs:
         restore-keys: ${{ runner.os }}-composer-
     - name: Update project dependencies
       shell: bash
-      run: composer update --no-interaction --no-progress --ansi
-    - name: Cache PHPUnit results
-      uses: actions/cache@v3
-      with:
-        path: .phpunit.result.cache
-        key: phpunit-php${{ matrix.php }}-${{ github.sha }}
-        restore-keys: |
-          phpunit-php${{ matrix.php }}-
-          phpunit-
-      continue-on-error: true
+      run: composer update --no-interaction --no-progress --ansi --no-plugins
+      if: ${{ inputs.prefer != 'lowest' }}
+    - name: Update project dependencies (lowest)
+      shell: bash
+      run: composer update --no-interaction --no-progress --ansi --no-plugins --prefer-lowest
+      if: ${{ inputs.prefer == 'lowest' }}

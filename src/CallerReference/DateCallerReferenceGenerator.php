@@ -14,7 +14,7 @@ final class DateCallerReferenceGenerator implements CallerReferenceGenerator
         $this->format = $format;
     }
 
-    public function __toString(): string
+    public function __invoke(): string
     {
         return date($this->format);
     }

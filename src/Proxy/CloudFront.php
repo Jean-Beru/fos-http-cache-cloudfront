@@ -25,10 +25,10 @@ final class CloudFront implements ProxyClient, PurgeCapable
      *     caller_reference_generator: CallerReferenceGenerator,
      * }
      */
-    private array $options;
+    private $options;
 
     /** @var array<string, true> */
-    private array $items = [];
+    private $items = [];
 
     /**
      * @param array<string, mixed> $options
@@ -65,7 +65,7 @@ final class CloudFront implements ProxyClient, PurgeCapable
             $this->client->createInvalidation([
                 'DistributionId' => $this->options['distribution_id'],
                 'InvalidationBatch' => [
-                    'CallerReference' => $this->options['caller_reference_generator'],
+                    'CallerReference' => $this->options['caller_reference_generator'](),
                     'Paths' => [
                         'Items' => array_keys($items),
                         'Quantity' => $quantity,
