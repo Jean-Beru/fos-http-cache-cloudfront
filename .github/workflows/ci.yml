@@ -1,4 +1,4 @@
-name: CI
+name: 'CI'
 
 on:
   push:
@@ -9,88 +9,84 @@ on:
       - 'main'
 
 env:
-  COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  COMPOSER_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
 
 jobs:
   php-cs-fixer:
-    name: PHP-CS-Fixer
-    runs-on: ubuntu-latest
+    name: 'PHP-CS-Fixer'
+    runs-on: 'ubuntu-latest'
     strategy:
-      matrix:
-        php:
-          - '8.1'
       fail-fast: false
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: 'Checkout'
+        uses: 'actions/checkout@v3'
+      - name: 'Setup PHP'
+        uses: 'shivammathur/setup-php@v2'
         with:
-          php-version: ${{ matrix.php }}
-          extensions: intl, bcmath, curl, openssl, mbstring
-          ini-values: memory_limit=-1
-          tools: pecl, composer
-          coverage: none
-      - name: Composer update
-        uses: ./.github/actions/composer_update
-      - name: Run PHP-CS-Fixer fix
-        run: ./vendor/bin/php-cs-fixer fix --dry-run --diff --ansi
-
-  phpunit:
-    name: PHPUnit
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php:
-          - '8.1'
-          - '8.2'
-      fail-fast: false
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: intl, bcmath, curl, openssl, mbstring
-          ini-values: memory_limit=-1
-          tools: pecl, composer
-          coverage: none
-      - name: Composer update
-        uses: ./.github/actions/composer_update
-      - name: Run PHPUnit
-        run: ./vendor/bin/phpunit
+          php-version: '8.1'
+          extensions: 'intl, bcmath, curl, openssl, mbstring'
+          ini-values: 'memory_limit=-1'
+          tools: 'pecl, composer'
+          coverage: 'none'
+      - uses: 'ramsey/composer-install@v3'
+      - name: 'Run PHP-CS-Fixer fix'
+        run: './vendor/bin/php-cs-fixer fix --dry-run --diff --ansi'
 
   phpstan:
-    name: PHPStan
-    runs-on: ubuntu-latest
+    name: 'PHPStan'
+    runs-on: 'ubuntu-latest'
     strategy:
-      matrix:
-        php:
-          - '8.1'
-          - '8.2'
       fail-fast: false
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: 'Checkout'
+        uses: 'actions/checkout@v3'
+      - name: 'Setup PHP'
+        uses: 'shivammathur/setup-php@v2'
         with:
-          php-version: ${{ matrix.php }}
-          extensions: intl, bcmath, curl, openssl, mbstring
-          ini-values: memory_limit=-1
-          tools: pecl, composer
-          coverage: none
-      - name: Composer update
-        uses: ./.github/actions/composer_update
-      - name: Cache PHPStan results
-        uses: actions/cache@v3
+          php-version: '8.2'
+          extensions: 'intl, bcmath, curl, openssl, mbstring'
+          ini-values: 'memory_limit=-1'
+          tools: 'pecl, composer'
+          coverage: 'none'
+      - uses: 'ramsey/composer-install@v3'
+      - name: 'Cache PHPStan results'
+        uses: 'actions/cache@v3'
         with:
-          path: /tmp/phpstan
-          key: phpstan-php${{ matrix.php }}-${{ github.sha }}
+          path: '/tmp/phpstan'
+          key: 'phpstan-php${{ matrix.php }}-${{ github.sha }}'
           restore-keys: |
             phpstan-php${{ matrix.php }}-
             phpstan-
         continue-on-error: true
-      - name: Run PHPStan analysis
-        run: ./vendor/bin/phpstan analyse --no-interaction --no-progress --no-interaction --ansi
+      - name: 'Run PHPStan analysis'
+        run: './vendor/bin/phpstan analyse --no-interaction --no-progress --no-interaction --ansi'
+
+  phpunit:
+    name: 'PHPUnit'
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        php:
+          - '8.1'
+          - '8.2'
+          - '8.3'
+        dependencies-version:
+          - 'lowest'
+          - 'highest'
+      fail-fast: false
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v3'
+      - name: 'Setup PHP'
+        uses: 'shivammathur/setup-php@v2'
+        with:
+          php-version: '${{ matrix.php }}'
+          extensions: 'intl, bcmath, curl, openssl, mbstring'
+          ini-values: 'memory_limit=-1'
+          tools: 'pecl, composer'
+          coverage: 'none'
+      - uses: 'ramsey/composer-install@v3'
+        with:
+          dependency-versions: '${{ matrix.dependencies-version }}'
+      - name: 'Run PHPUnit'
+        run: './vendor/bin/phpunit'
