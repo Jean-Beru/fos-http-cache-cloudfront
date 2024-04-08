@@ -40,7 +40,7 @@ final class CloudFront implements ProxyClient, PurgeCapable
     /**
      * @param array<string, string> $headers
      */
-    public function purge($url, array $headers = []): self
+    public function purge($url, array $headers = []): static
     {
         $this->items[$url] = true;
 
