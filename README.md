@@ -1,5 +1,11 @@
 # CloudFront implementation of FOSHttpCache
 
+[![Latest Version](https://img.shields.io/github/release/Jean-Beru/fos-http-cache-cloudfront.svg?style=flat-square)](https://github.com/Jean-Beru/fos-http-cache-cloudfront/releases)
+[![Total Downloads](https://poser.pugx.org/Jean-Beru/fos-http-cache-cloudfront/downloads)](https://packagist.org/packages/Jean-Beru/fos-http-cache-cloudfront)
+[![Monthly Downloads](https://poser.pugx.org/Jean-Beru/fos-http-cache-cloudfront/d/monthly.png)](https://packagist.org/packages/Jean-Beru/fos-http-cache-cloudfront)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Tests](https://github.com/Jean-Beru/fos-http-cache-cloudfront/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Jean-Beru/fos-http-cache-cloudfront/actions/workflows/ci.yml?query=branch%3Amain)
+
 This library provides an implementation of [FOSHttpCache](https://github.com/FriendsOfSymfony/FOSHttpCache/) for
 [CloudFront](https://aws.amazon.com/cloudfront/).
 
