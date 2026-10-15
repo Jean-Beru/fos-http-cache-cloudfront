@@ -14,11 +14,11 @@ This library provides an implementation of [FOSHttpCache](https://github.com/Fri
 ### Initialize dependency
 
 First, create an instance of `AsyncAws\CloudFront\CloudFrontClient` to allow the proxy to make requests.
-See [aws-sdk-php documentation](https://docs.aws.amazon.com/aws-sdk-php/v3/api/class-Aws.AwsClient.html#___construct) 
+See [AsyncAws CloudFront client documentation](https://async-aws.com/clients/cloud-front.html)
 for more information.
 
 ```php
-use Aws\CloudFront\CloudFrontClient;
+use AsyncAws\CloudFront\CloudFrontClient;
 
 $client = new CloudFrontClient(/* client configuration */);
 ```
@@ -53,11 +53,11 @@ $proxy
 
 ### Avoid request duplication
 
-CloudFront APIs asks for a "caller reference" to avoid duplicated requests. By default, this library use the
-[UniqIdCallerReferenceGenerator](./CallerReference/UniqIdCallerReferenceGenerator.php) to generate a unique identifier.
+The CloudFront API asks for a "caller reference" to avoid duplicated requests. By default, this library uses the
+[UniqIdCallerReferenceGenerator](./src/CallerReference/UniqIdCallerReferenceGenerator.php) to generate a unique identifier.
 
-You can use other generators present in the [CallerReference folder](./CallerReference/) or implement your own by
-implementing the [CallerReferenceGenerator](./CallerReference/CallerReferenceGenerator) interface.
+You can use other generators present in the [CallerReference folder](./src/CallerReference/) or implement your own by
+implementing the [CallerReferenceGenerator](./src/CallerReference/CallerReferenceGenerator.php) interface.
 
 For instance, if you want to avoid duplicate calls in the same minute:
 
@@ -74,7 +74,7 @@ $proxy = new CloudFront(
 );
 ```
 
-If a duplication is detected by AWS, a `FOS\HttpCache\Exception\ProxyResponseException` will be thrown.
+If a duplication is detected by AWS, a `FOS\HttpCache\Exception\ExceptionCollection` containing a `FOS\HttpCache\Exception\ProxyResponseException` will be thrown.
 
 ## Resources
 
