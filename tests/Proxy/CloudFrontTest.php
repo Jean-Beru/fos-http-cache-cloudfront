@@ -34,7 +34,7 @@ class CloudFrontTest extends TestCase
         $this->client
             ->expects($this->once())
             ->method('createInvalidation')
-            ->with([
+            ->with($this->identicalTo([
                 'DistributionId' => 'test-distribution-id',
                 'InvalidationBatch' => [
                     'CallerReference' => 'test-caller-reference',
@@ -43,7 +43,7 @@ class CloudFrontTest extends TestCase
                         'Quantity' => 3,
                     ],
                 ],
-            ])
+            ]))
         ;
 
         $this->getCloudFront()
