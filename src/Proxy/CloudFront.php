@@ -62,7 +62,7 @@ final class CloudFront implements ProxyClient, PurgeCapable
             $this->client->createInvalidation([
                 'DistributionId' => $this->options['distribution_id'],
                 'InvalidationBatch' => [
-                    'CallerReference' => $this->options['caller_reference_generator'],
+                    'CallerReference' => (string) $this->options['caller_reference_generator'],
                     'Paths' => [
                         'Items' => array_keys($items),
                         'Quantity' => $quantity,
