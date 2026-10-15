@@ -75,6 +75,7 @@ class CloudFrontTest extends TestCase
     public function testException(): void
     {
         $this->client
+            ->expects($this->once())
             ->method('createInvalidation')
             ->willThrowException(new AccessDeniedException(new SimpleMockedResponse(content: '<Error><message>Access denied.</message></Error>', statusCode: 403)))
         ;
