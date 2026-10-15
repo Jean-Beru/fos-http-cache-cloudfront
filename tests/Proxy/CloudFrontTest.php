@@ -21,7 +21,7 @@ class CloudFrontTest extends TestCase
     protected function setUp(): void
     {
         $this->client = $this->createMock(CloudFrontClient::class);
-        $this->callerReferenceGenerator = new class() implements CallerReferenceGenerator {
+        $this->callerReferenceGenerator = new class implements CallerReferenceGenerator {
             public function __toString(): string
             {
                 return 'test-caller-reference';

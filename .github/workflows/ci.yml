@@ -5,61 +5,52 @@ on:
     branches: ['main']
   pull_request:
     branches: [ 'main' ]
-  schedule:
-    - cron: '0 0 * * *'
-
-env:
-  COMPOSER_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+  workflow_dispatch:
 
 jobs:
   php-cs-fixer:
     name: 'PHP-CS-Fixer'
     runs-on: 'ubuntu-latest'
-    strategy:
-      fail-fast: false
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
       - name: 'Setup PHP'
-        uses: 'shivammathur/setup-php@v2'
+        uses: 'shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962' # 2.40.0
         with:
           php-version: '8.1'
           extensions: 'intl, bcmath, curl, openssl, mbstring'
           ini-values: 'memory_limit=-1'
           tools: 'pecl, composer'
           coverage: 'none'
-      - uses: 'ramsey/composer-install@v3'
+      - uses: 'ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda' # 4.0.0
       - name: 'Run PHP-CS-Fixer fix'
         run: './vendor/bin/php-cs-fixer fix --dry-run --diff --ansi'
 
   phpstan:
     name: 'PHPStan'
     runs-on: 'ubuntu-latest'
-    strategy:
-      fail-fast: false
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
       - name: 'Setup PHP'
-        uses: 'shivammathur/setup-php@v2'
+        uses: 'shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962' # 2.40.0
         with:
           php-version: '8.2'
           extensions: 'intl, bcmath, curl, openssl, mbstring'
           ini-values: 'memory_limit=-1'
           tools: 'pecl, composer'
           coverage: 'none'
-      - uses: 'ramsey/composer-install@v3'
+      - uses: 'ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda' # 4.0.0
       - name: 'Cache PHPStan results'
-        uses: 'actions/cache@v3'
+        uses: 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9' # v6.1.0
         with:
           path: '/tmp/phpstan'
-          key: 'phpstan-php${{ matrix.php }}-${{ github.sha }}'
+          key: 'phpstan-${{ github.sha }}'
           restore-keys: |
-            phpstan-php${{ matrix.php }}-
             phpstan-
         continue-on-error: true
       - name: 'Run PHPStan analysis'
-        run: './vendor/bin/phpstan analyse --no-interaction --no-progress --no-interaction --ansi'
+        run: './vendor/bin/phpstan analyse --no-interaction --no-progress --ansi'
 
   phpunit:
     name: 'PHPUnit'
@@ -70,22 +61,24 @@ jobs:
           - '8.1'
           - '8.2'
           - '8.3'
+          - '8.4'
+          - '8.5'
         dependencies-version:
           - 'lowest'
           - 'highest'
       fail-fast: false
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
       - name: 'Setup PHP'
-        uses: 'shivammathur/setup-php@v2'
+        uses: 'shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962' # 2.40.0
         with:
           php-version: '${{ matrix.php }}'
           extensions: 'intl, bcmath, curl, openssl, mbstring'
           ini-values: 'memory_limit=-1'
           tools: 'pecl, composer'
           coverage: 'none'
-      - uses: 'ramsey/composer-install@v3'
+      - uses: 'ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda' # 4.0.0
         with:
           dependency-versions: '${{ matrix.dependencies-version }}'
       - name: 'Run PHPUnit'
