@@ -13,16 +13,16 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v7'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
       - name: 'Setup PHP'
-        uses: 'shivammathur/setup-php@v2'
+        uses: 'shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962' # 2.40.0
         with:
           php-version: '8.1'
           extensions: 'intl, bcmath, curl, openssl, mbstring'
           ini-values: 'memory_limit=-1'
           tools: 'pecl, composer'
           coverage: 'none'
-      - uses: 'ramsey/composer-install@v4'
+      - uses: 'ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda' # 4.0.0
       - name: 'Run PHP-CS-Fixer fix'
         run: './vendor/bin/php-cs-fixer fix --dry-run --diff --ansi'
 
@@ -31,18 +31,18 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v7'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
       - name: 'Setup PHP'
-        uses: 'shivammathur/setup-php@v2'
+        uses: 'shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962' # 2.40.0
         with:
           php-version: '8.2'
           extensions: 'intl, bcmath, curl, openssl, mbstring'
           ini-values: 'memory_limit=-1'
           tools: 'pecl, composer'
           coverage: 'none'
-      - uses: 'ramsey/composer-install@v4'
+      - uses: 'ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda' # 4.0.0
       - name: 'Cache PHPStan results'
-        uses: 'actions/cache@v6'
+        uses: 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9' # v6.1.0
         with:
           path: '/tmp/phpstan'
           key: 'phpstan-${{ github.sha }}'
@@ -69,16 +69,16 @@ jobs:
       fail-fast: false
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v7'
+        uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
       - name: 'Setup PHP'
-        uses: 'shivammathur/setup-php@v2'
+        uses: 'shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962' # 2.40.0
         with:
           php-version: '${{ matrix.php }}'
           extensions: 'intl, bcmath, curl, openssl, mbstring'
           ini-values: 'memory_limit=-1'
           tools: 'pecl, composer'
           coverage: 'none'
-      - uses: 'ramsey/composer-install@v4'
+      - uses: 'ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda' # 4.0.0
         with:
           dependency-versions: '${{ matrix.dependencies-version }}'
       - name: 'Run PHPUnit'
